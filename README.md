@@ -193,11 +193,3 @@ A hidden debug menu can be accessed for all Nichibutsu 68000 (Armed F Based) tit
 |Debug|
 |--|
 |<table> <tr><th>Functions</th><th>Keymap</th></tr><tr><td>Layer (TXT)</td><td>F7</td><tr><td>Layer (FG)</td><td>F8</td></tr><tr><td>Layer (BG)</td><td>F9</td><tr><td>Layer (SP)</td><td>F10</td></tr> </table>|
-
-# Support
-
-Please consider showing support for this and thanking Erin by giving to her Kofi: [**Erin's Ko-fi**](https://ko-fi.com/Erino). While it isn't necessary, it's greatly appreciated.
-
-# Licensing
-
-Contact the author for special licensing needs. Otherwise follow the GPLv2 license attached.
