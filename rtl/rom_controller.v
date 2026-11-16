@@ -83,7 +83,7 @@ reg [22:0] sound_rom_ctrl_addr;
 
 // download wires
 reg [22:0] download_addr;
-reg [32:0] download_data;
+reg [31:0] download_data;
 reg download_req;
 
 // control wires
@@ -119,7 +119,7 @@ segment
     .ctrl_valid(prog_rom_ctrl_valid),
     .ctrl_hit(prog_rom_ctrl_hit),
     .ctrl_data(sdram_q),
-    .rom_addr(prog_rom_addr),
+    .rom_addr(prog_rom_addr[19:1]),
     .rom_data(prog_rom_data)
 );
 

@@ -1,40 +1,43 @@
 
 # Nichibutsu M68000 (Armed F) FPGA Implementation
 
-FPGA compatible core of Nichibutsu M68000 (Terra Force Based) arcade hardware for [**MiSTerFPGA**](https://github.com/MiSTer-devel/Main_MiSTer/wiki) written by **Erin Olafson**. Terra Force PCB (different board revisions) donated by [**@atrac17**](https://twitter.com/_atrac17) / [**@djhardrich**](https://twitter.com/djhardrich).
+FPGA compatible core of Nichibutsu M68000 (Terra Force Based) arcade hardware for [**MiSTerFPGA**](https://github.com/MiSTer-devel/Main_MiSTer/wiki) written by **Erin Olafson**. Terra Force PCB (different board revisions) donated by [**@atrac17**](https://twitter.com/_atrac17) / [**@djhardrich**](https://twitter.com/djhardrich). Maintenance and miscellaneous quality of life features added by TheJesusfish
 
-The intent is for this core to be a 1:1 implementation of the Nichibutsu (Terra Force based) 68000 hardware. Currently in an beta state, this core is in active development with assistance from [**atrac17**](https://github.com/atrac17).
+The intent is for this core to be a 1:1 implementation of the Nichibutsu (Terra Force based) 68000 hardware.
 
 <br>
 <img width="" height="" src="https://user-images.githubusercontent.com/32810066/170655863-5b1418f1-1020-46f6-9e72-6ad08ec96b49.png">
 <br>
 
+**[MD] was added to the end of all files so that it can live alongside the legacy version**
+
 ## Supported Games
 
-| Title | Status | Released | Protection | Unprotected Sets |
+| Title | Status | MAME 0.288 sets | Protection | Unprotected Sets |
 |------|---------|----------|------------|------------------|
-[**Terra Force**](https://en.wikipedia.org/wiki/Nihon_Bussan)           | Implemented   | **terraf, terrfj, terrafu**         | NB1414M4 | **terrafjb, terrafb**   |
+[**Terra Force**](https://en.wikipedia.org/wiki/Nihon_Bussan)           | Implemented   | **terraf, terrafj, terrafu, terrafua** | NB1414M4 | **terrafjb, terrafb**   |
 [**Kozure Ōkami**](https://en.wikipedia.org/wiki/Nihon_Bussan)          | Implemented   | **kozure**                          | NB1414M4 | N/A                     |
-[**Chouji Meikyuu Legion**](https://en.wikipedia.org/wiki/Nihon_Bussan) | Implemented   | **legion, legionj2**                | NB1414M4 | **legionjb, legionjb2** |
+[**Chouji Meikyuu Legion**](https://en.wikipedia.org/wiki/Nihon_Bussan) | Implemented   | **legion, legionj, legionj2**       | NB1414M4 | **legionjb, legionjb2** |
 [**Crazy Climber 2**](https://en.wikipedia.org/wiki/Nihon_Bussan)       | Implemented   | **cclimbr2, cclimbr2a**             | NB1414M4 | N/A                     |
 [**Armed F**](https://en.wikipedia.org/wiki/Formation_Armed_F)          | Implemented   | **armedf, armedff**                 | None     | N/A                     |
-[**Tatakae! Big Fighter**](https://en.wikipedia.org/wiki/Nihon_Bussan)  | Implemented   | **skyrobo, bigfghtr**               | i8751    | N/A                     |
+[**Sky Robo / Tatakae! Big Fighter**](https://en.wikipedia.org/wiki/Nihon_Bussan)  | Implemented   | **skyrobo, bigfghtr**     | i8751    | N/A                     |
 
 ## External Modules
 
 |Name| Purpose | Author |
 |----|---------|--------|
 | [**fx68k**](https://github.com/ijor/fx68k)                                                   | [**Motorola 68000 CPU**](https://en.wikipedia.org/wiki/Motorola_68000) | Jorge Cwik                    |
-| [**t80**](https://opencores.org/projects/t80)                                                | [**Zilog Z80 CPU**](https://en.wikipedia.org/wiki/Zilog_Z80)           | Daniel Wallner                |
+| [**T80**](https://github.com/MiSTer-devel/T80)                                               | [**Zilog Z80 CPU**](https://en.wikipedia.org/wiki/Zilog_Z80)           | Daniel Wallner / MiSTer-devel |
 | [**jtopl2**](https://github.com/jotego/jtopl)                                                | [**Yamaha OPL 2**](https://en.wikipedia.org/wiki/Yamaha_OPL#OPL2)      | Jose Tejada                   |
-| [**jt8751**](https://github.com/jotego/jtframe/blob/master/hdl/cpu/jtframe_8751mcu.v)        | [**Intel 8751**](https://en.wikipedia.org/wiki/Intel_8051)             | Oregano Systems / Jose Tejada |
-| [**yc_out**](https://github.com/MikeS11/MiSTerFPGA_YC_Encoder)  | [**Y/C Video Module**](https://en.wikipedia.org/wiki/S-Video)          | Mike Simone    |
+| [**MC8051 IP core v1.6**](https://www.oreganosystems.at/) + native `rtl/i8751.sv` wrapper     | [**Intel 8751**](https://en.wikipedia.org/wiki/Intel_8051)             | Oregano Systems (LGPL)        |
+| [**Template_MiSTer sys/**](https://github.com/MiSTer-devel/Template_MiSTer) (incl. yc_out)  | MiSTer framework                                                      | MiSTer-devel                  |
+| [**Arcade-TaitoF2_MiSTer**](https://github.com/MiSTer-devel/Arcade-TaitoF2_MiSTer) save-state code (`rtl/savestate/`: ddram, memory_stream, savestates, savestate_ui) | Save states | Martin Donlon (GPL-2.0+) |
 
 # Known Issues / Tasks
 
-- Screen Flip implementation  
 - Layer priority - **Chouji Meikyuu Legion (Japan ver 1.05) [legionj, legionjb]**  
-- Service Menu text layer **NB1414M4**  
+- Service Menu text layer **NB1414M4** (the Adjustments / Switch Test values are not drawn)  
+- **skyrobobl** has no MRA: its 8748 MCU is undumped
 
 # PCB Check List
 
@@ -111,6 +114,27 @@ A hidden debug menu can be accessed for all Nichibutsu 68000 (Armed F Based) tit
 
 # Core Features
 
+### Save States
+
+- Four slots (OSD **Savestate Slot**, optional **Autoincrement Slot**). Save with **Alt+F1** or OSD **Save State**, restore with
+  **F1** or OSD **Restore State**. On a controller, hold **Save/Load** and press **Down** to save, **Up** to restore,
+  **Left/Right** to change slot. Slots are written to
+  `savestates/Arcade/<MRA name>_<n>.ss` and survive a core reload. Modelled on Arcade-TaitoF2_MiSTer; only state that does not
+  rebuild itself within a frame is stored.
+
+### High Score Saving
+
+- MAME `hiscore.dat` tables (plus verified tables for terrafua, legionjb2, skyrobo and bigfghtr) are restored at start-up and
+  saved when the OSD is opened (**Autosave Hiscores**, default On) or with **Save Hiscores**. Files: `config/nvram/<MRA name>.nvm`.
+
+### Orientation and Flip
+
+- Armed F and Legion (MAME ROT270) start rotated on HDMI; **Rotate Screen: No (Original)** gives the original landscape output.
+  Rotation is HDMI only (framework framebuffer); on analog, turn the monitor as on the original cabinet.
+- The game's own flip screen (**Flip Screen** dip, and player 2's turn in **Cocktail** mode) is drawn by the core itself, as on
+  the PCB, so it applies to the analog and HDMI outputs alike. It matches MAME: an exact 180° turn of the picture, with sprites
+  one line lower.
+
 ### Native Y/C Output
 
 - Native Y/C ouput is possible with the [**analog I/O rev 6.1 pcb**](https://github.com/MiSTer-devel/Main_MiSTer/wiki/IO-Board). Using the following cables, [**HD-15 to BNC cable**](https://www.amazon.com/StarTech-com-Coax-RGBHV-Monitor-Cable/dp/B0033AF5Y0/) will transmit Y/C over the green and red lines. Choose an appropriate adapter to feed [**Y/C (S-Video)**](https://www.amazon.com/MEIRIYFA-Splitter-Extension-Monitors-Transmission/dp/B09N19XZJQ) to your display.
@@ -137,9 +161,18 @@ A hidden debug menu can be accessed for all Nichibutsu 68000 (Armed F Based) tit
 
 <table><tr><th>Game</th><th>Joystick</th><th>Service Menu</th><th>Shared Controls</th><th>Dip Default</th></tr><tr><td><p align="center">Armed F</p></td><td><p align="center">8-Way</p></td><td><p align="center"><img src="https://user-images.githubusercontent.com/32810066/170657740-f1781b3a-f50b-41eb-aff3-63d8b891ccf6.png"></td><td><p align="center">Upright</td><td><p align="center"><b>Upright</b></td><tr><td><p align="center">Chouji Meikyuu Legion</p></td><td><p align="center">8-Way</p></td><td><p align="center"><img src="https://user-images.githubusercontent.com/32810066/170711151-9d7e8a34-b715-48a5-b89f-9b8004cb04f0.png"></td><td><p align="center">Co-Op</td><td><p align="center"><b>Upright</b></td><tr><td><p align="center">Crazy Climber 2</p></td><td><p align="center">4-Way</p></td><td><p align="center"><img src="https://user-images.githubusercontent.com/32810066/170847086-105099f0-2e8a-4bdb-af1a-b8fa5a9c5f6d.png"></td><td><p align="center">Upright</td><td><p align="center"><b>Upright</b></td><tr><td><p align="center">Kozure Ōkami</p></td><td><p align="center">8-Way</p></td><td><p align="center"><img src="https://user-images.githubusercontent.com/32810066/173246143-91d3441b-6993-4860-b739-73ac920bfd9c.png"></td><td><p align="center">Upright</td><td><p align="center"><b>Upright</b></td><tr><td><p align="center">Terra Force</p></td><td><p align="center">8-Way</p></td><td><p align="center"><img src="https://user-images.githubusercontent.com/32810066/173246181-54916a4f-bf6a-47fb-ae93-b40db12cfab8.png"></td><td><p align="center">Upright</td><td><p align="center"><b>Upright</b></td></tr><td><p align="center">Tatakae! Big Fighter</p></td><td><p align="center">8-Way</p></td><td><p align="center"><img src="https://user-images.githubusercontent.com/32810066/176583826-fba17901-aa97-4241-b03d-f7261e65074e.png"></td><td><p align="center">Upright</td><td><p align="center"><b>Upright</b></td></table>
 
-### Note: (Only applies once screen flip is implemented)
+### Note
 
-> Upright cabinets share a **1L3B** control panel layout. Players are required to switch controller. If set the cabinet type is set to table, the screen inverts for cocktail mode per player and has multiple controls. <br><br>Push button 3 may have no function in game, but corresponds to the original hardware and service menu. Crazy Climber 2 uses two 4-way joysticks and the second stick (right) corresponds to buttons 1 thru 4 for movement.
+> Player 1 uses controller 1 and player 2 uses controller 2: each controller has its own **Start** and **Coin** (controller 1 =
+> 1P Start / Coin A, controller 2 = 2P Start / Coin B). There are no separate "2P Start" / "2P Coin" buttons on controller 1.
+> If the cabinet dip is set to table, the screen inverts for player 2 in cocktail mode.<br><br>
+> Default controller mapping (every game): **A** = button 1, **B** = button 2, **Start** = Start, **Select** = Coin,
+> **R** = Pause, **L** = save states (hold **L** + **Down** save, + **Up** restore, + **Left/Right** slot). Button names are
+> taken from the service manuals and instruction cards (Terra Force: Beam Cannon / Hyper Missile; Armed F: Beam / Reverse;
+> Legion: Beam / Time Bomb; Kozure Ōkami: Slash / Block, both together to jump; Sky Robo / Big Fighter: Beam / Transform). The boards'
+> third input ("PUSH 3" in the switch test) is not used by any game and is not mapped.<br><br>
+> Crazy Climber 2 uses two joysticks: the left stick is the d-pad, the right stick is on **X** (up), **Y** (left), **B** (down)
+> and **A** (right).
 
 <br>
 
@@ -151,7 +184,7 @@ A hidden debug menu can be accessed for all Nichibutsu 68000 (Armed F Based) tit
 
 |Services|Coin/Start|
 |--|--|
-|<table> <tr><th>Functions</th><th>Keymap</th></tr><tr><td>Test</td><td>F2</td></tr><tr><td>Reset</td><td>F3</td></tr><tr><td>Service</td><td>9</td></tr><tr><td>Pause</td><td>P</td></tr> </table> | <table><tr><th>Functions</th><th>Keymap</th><tr><tr><td>P1 Start</td><td>1</td></tr><tr><td>P2 Start</td><td>2</td></tr><tr><td>P1 Coin</td><td>5</td></tr><tr><td>P2 Coin</td><td>6</td></tr> </table>|
+|<table> <tr><th>Functions</th><th>Keymap</th></tr><tr><td>Test</td><td>F2</td></tr><tr><td>Reset</td><td>F3</td></tr><tr><td>Service</td><td>9</td></tr><tr><td>Pause</td><td>P</td></tr><tr><td>Restore State</td><td>F1</td></tr><tr><td>Save State</td><td>Alt+F1</td></tr> </table> | <table><tr><th>Functions</th><th>Keymap</th><tr><tr><td>P1 Start</td><td>1</td></tr><tr><td>P2 Start</td><td>2</td></tr><tr><td>P1 Coin</td><td>5</td></tr><tr><td>P2 Coin</td><td>6</td></tr> </table>|
 
 |Player 1|Player 2|
 |--|--|
@@ -163,7 +196,7 @@ A hidden debug menu can be accessed for all Nichibutsu 68000 (Armed F Based) tit
 
 # Support
 
-Please consider showing support for this and future projects via [**Erin's Ko-fi**](https://ko-fi.com/Erino) and [**atrac17's Patreon**](https://www.patreon.com/atrac17). While it isn't necessary, it's greatly appreciated.
+Please consider showing support for this and thanking Erin by giving to her Kofi: [**Erin's Ko-fi**](https://ko-fi.com/Erino). While it isn't necessary, it's greatly appreciated.
 
 # Licensing
 
